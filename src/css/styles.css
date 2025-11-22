@@ -52,6 +52,7 @@
   color: #fff;
 }
 .loader {
+  display: block;
   margin: 0 auto;
   width: 64px;
   height: 48px;
