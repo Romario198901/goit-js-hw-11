@@ -1,11 +1,14 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { refs } from '../main';
 const simplelightbox = new SimpleLightbox('.gallery-link', {
   captionsData: 'alt',
   captionPosition: 'bottom',
   captionDelay: 500,
 });
+const refs = {
+  gallery: document.querySelector('.js-gallery'),
+  loader: document.querySelector('.loader'),
+};
 function createCard({
   webformatURL,
   largeImageURL,
@@ -41,11 +44,11 @@ function createCard({
 }
 export function createGallery(images) {
   const markup = images.map(createCard).join('');
-  refs.gallery.innerHTML = markup;
+refs.gallery.innerHTML = markup;
   simplelightbox.refresh();
 }
 export function clearGallery() {
-  refs.gallery.innerHTML = '';
+refs.gallery.innerHTML = '';
 }
 export function showLoader() {
   refs.loader.classList.remove('is-hidden');

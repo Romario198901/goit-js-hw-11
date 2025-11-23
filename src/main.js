@@ -1,3 +1,4 @@
+import iziToast from 'izitoast';
 import { getImagesByQuery } from './js/pixabay-api';
 
 import {
@@ -6,23 +7,52 @@ import {
   hideLoader,
   showLoader,
 } from './js/render-functions';
+const searchForm = document.querySelector('form');
 
-export const refs = {
-  searchForm: document.querySelector('form'),
-  gallery: document.querySelector('.js-gallery'),
-  loader: document.querySelector('.loader'),
-};
-refs.searchForm.addEventListener('submit', handleFormSubmit);
+searchForm.addEventListener('submit', handleFormSubmit);
 function handleFormSubmit(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
-  const query = formData.get('search-text');
+  const query = formData.get('search-text').trim();
+  if (!query) {
+    iziToast.warning({
+      title: '❌',
+      titleColor: '#fafafb',
+      message: ` Please enter search query!`,
+      messageColor: '#fafafb',
+      backgroundColor: '#ef4040',
+      position: 'topRight',
+    });
+    return;
+  }
+  clearGallery();
   showLoader();
   getImagesByQuery(query)
     .then(images => {
-      createGallery(images);
+      if (!images || images.length === 0) {
+        iziToast.error({
+          title: '❌',
+          titleColor: '#fafafb',
+          message: `Sorry, there are no images matching your search query. Please try again!`,
+          messageColor: '#fafafb',
+          backgroundColor: '#ef4040',
+          position: 'topRight',
+        });
+        return;
+      }
+     createGallery(images);
     })
-    .catch(error => console.error(error))
+    .catch(error => {
+      iziToast.error({
+        title: '❌',
+        titleColor: '#fafafb',
+        message: `Sorry, something went wrong!!!. Please try again!`,
+        messageColor: '#fafafb',
+        backgroundColor: '#ef4040',
+        position: 'topRight',
+      });
+      console.error(error);
+    })
     .finally(() => {
       hideLoader();
     });
